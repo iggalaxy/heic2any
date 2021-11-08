@@ -40,6 +40,9 @@ var utils = {
     },
     dataURItoBlob: function (dataURI) {
         try {
+            if (typeof window === "undefined") {
+                throw new Error("SSR environment detected. Skipping Blob creation");
+            }
             var byteString = atob(dataURI.split(",")[1]);
             var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
             var ab = new ArrayBuffer(byteString.length);
@@ -51,8 +54,7 @@ var utils = {
             return blob;
         }
         catch (e) {
-            return "ERR_DOM Error on converting data URI to blob " + e &&
-                e.toString
+            return "ERR_DOM Error on converting data URI to blob " + e && e.toString
                 ? e.toString()
                 : e;
         }
@@ -105,7 +107,7 @@ var utils = {
                 images: images,
                 interval: interval,
                 gifHeight: gifHeight,
-                gifWidth: gifWidth,
+                gifWidth: gifWidth
             }, function (res) {
                 if (res.error) {
                     reject(("ERR_GIF " + (res.errorCode) + " " + (res.errorMessage)));
@@ -170,7 +172,8 @@ var utils = {
             "ERR_LIBHEIF",
             "ERR_GIF",
             "ERR_DOM",
-            "ERR_CANVAS" ];
+            "ERR_CANVAS"
+        ];
         for (var index = 0; index < headers.length; index++) {
             var header = headers[index];
             if (message.indexOf(header) === 0) {
@@ -179,9 +182,9 @@ var utils = {
         }
         return {
             code: code,
-            message: message,
+            message: message
         };
-    },
+    }
 };
 function decodeBuffer(buffer) {
     return new Promise(function (resolve, reject) {
@@ -234,7 +237,7 @@ function heic2any(ref) {
                 return Promise.all(imageDataArr.map(function (imageData) { return utils.imageDataToBlob({
                     imageData: imageData,
                     toType: toType,
-                    quality: quality,
+                    quality: quality
                 }); }));
             })
                 .then(function (blobs) {
@@ -256,7 +259,7 @@ function heic2any(ref) {
                         images: dataURIs,
                         interval: gifInterval,
                         gifWidth: gifWidth,
-                        gifHeight: gifHeight,
+                        gifHeight: gifHeight
                     });
                 }
                 return "";
